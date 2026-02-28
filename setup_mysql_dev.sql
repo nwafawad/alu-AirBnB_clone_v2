@@ -1,3 +1,5 @@
+-- Task: Prepare the MySQL server for the AirBnB clone v2 development environment
+
 -- Create the database if it doesn't exist
 CREATE DATABASE IF NOT EXISTS hbnb_dev_db;
 

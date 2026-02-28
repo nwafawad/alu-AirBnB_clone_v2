@@ -1,2 +1,2 @@
 #!/usr/bin/python3
-"""initializes engine package"""
+"""This module initializes the storage engine package for AirBnB clone v2."""

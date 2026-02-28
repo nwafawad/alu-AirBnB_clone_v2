@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-"""DBStorage module for AirBnB clone v2"""
+"""This module defines DBStorage, the database storage engine
+for AirBnB clone v2 using SQLAlchemy 1.4.x and MySQL."""
 
 import os
 
@@ -90,9 +91,10 @@ class DBStorage:
         session_factory = sessionmaker(
             bind=self.__engine, expire_on_commit=False
         )
+        # Create a scoped session registry and store the proxy directly
         Session = scoped_session(session_factory)
-        self.__session = Session()
+        self.__session = Session
 
     def close(self):
-        """Closes the session."""
-        self.__session.close()
+        """Removes the current session from the scoped session registry."""
+        self.__session.remove()
