@@ -2,12 +2,8 @@
 """
 Module for a basic Flask web application.
 
-This script initializes a Flask server that listens on 0.0.0.0:5000
-and exposes three routes:
-
-    /           - Returns the string 'Hello HBNB!'
-    /hbnb       - Returns the string 'HBNB'
-    /c/<text>   - Returns 'C <text>' with underscores replaced by spaces
+This script initializes a Flask server that listens for requests
+on a specific port and returns a simple greeting.
 """
 
 from flask import Flask
@@ -31,13 +27,12 @@ def hello_route():
 @app.route('/hbnb', strict_slashes=False)
 def hbnb():
     """
-    Handles requests to the /hbnb URL.
+    Handles requests to the hbnb URL
 
     Returns:
-        str: The string 'HBNB'.
+        str: A simple 'HBNB' message.
     """
     return 'HBNB'
-
 
 @app.route('/c/<text>', strict_slashes=False)
 def c_route(text):
@@ -58,10 +53,17 @@ def c_route(text):
     """
     formatted_text = text.replace('_', ' ')
     return f"C {formatted_text}"
-
+   """
+   this is the main entry point of the script. It starts the Flask development server on host
+   """
 
 if __name__ == "__main__":
-    # Start the Flask development server.
-    # Host : 0.0.0.0 - listen on all available network interfaces
-    # Port : 5000    - standard Flask default port
+    """
+    Main entry point of the script.
+
+    Starts the Flask development server:
+    - Host: Defaults to 127.0.0.1 (localhost)
+    - Port: 3000
+    - Debug: Enabled (provides detailed error messages and auto-reloads)
+    """
     app.run(host='0.0.0.0', port=5000)
