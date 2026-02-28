@@ -70,7 +70,12 @@ class Place(BaseModel, Base):
 
             reviews = list(models.storage.all(Review).values())
 
-            return list(filter(lambda review: review.place_id == self.id, reviews))
+            return list(
+                filter(
+                    lambda review: review.place_id == self.id,
+                    reviews,
+                )
+            )
 
         @property
         def amenities(self):
@@ -80,7 +85,10 @@ class Place(BaseModel, Base):
             amenities = list(models.storage.all(Amenity).values())
 
             return list(
-                filter(lambda amenity: amenity.place_id in self.amenity_ids, amenities)
+                filter(
+                    lambda amenity: amenity.place_id in self.amenity_ids,
+                    amenities,
+                )
             )
 
         @amenities.setter
