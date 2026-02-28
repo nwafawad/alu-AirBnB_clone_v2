@@ -53,9 +53,7 @@ def c_route(text):
     """
     formatted_text = text.replace('_', ' ')
     return f"C {formatted_text}"
-   """
-   this is the main entry point of the script. It starts the Flask development server on host
-   """
+
 
 if __name__ == "__main__":
     """

@@ -1,16 +1,6 @@
--- Task: Prepare the MySQL server for the AirBnB clone v2 development environment
-
--- Create the database if it doesn't exist
+-- A script that creates a new database and user (in case they don't exist).
 CREATE DATABASE IF NOT EXISTS hbnb_dev_db;
-
--- Create the user if it doesn't exist
 CREATE USER IF NOT EXISTS 'hbnb_dev'@'localhost' IDENTIFIED BY 'hbnb_dev_pwd';
-
--- Grant all privileges on hbnb_dev_db to hbnb_dev
 GRANT ALL PRIVILEGES ON hbnb_dev_db.* TO 'hbnb_dev'@'localhost';
-
--- Grant SELECT privileges on performance_schema to hbnb_dev
 GRANT SELECT ON performance_schema.* TO 'hbnb_dev'@'localhost';
-
--- Apply the changes (flush privileges)
 FLUSH PRIVILEGES;

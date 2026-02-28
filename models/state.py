@@ -1,14 +1,10 @@
 #!/usr/bin/python3
-"""state module for HBNB project"""
+""" State Module for HBNB project """
 
-import os
-
-from sqlalchemy import Column, String
+from models.base_model import BaseModel, Base
+from sqlalchemy import String, Column
 from sqlalchemy.orm import relationship
-
-import models
-from models.base_model import Base, BaseModel
-from models.city import City
+from os import getenv
 
 
 class State(BaseModel, Base):
@@ -16,20 +12,29 @@ class State(BaseModel, Base):
 
     __tablename__ = "states"
 
-    name = Column(String(128), nullable=False)
-
-    if os.getenv("HBNB_TYPE_STORAGE") == "db":
+    if getenv("HBNB_TYPE_STORAGE") == "db":
+        name = Column(String(128), nullable=False)
         cities = relationship(
-            "City", backref="state", cascade="all, delete, delete-orphan"
+            "City", back_populates="state", cascade="all, delete-orphan"
         )
     else:
+        # for file storage
+        name = ""
+
+    def __init__(self, *args, **kwargs):
+        """initialize a state object"""
+        super().__init__(*args, **kwargs)
+
+    if getenv("HBNB_TYPE_STORAGE") != "db":
 
         @property
         def cities(self):
-            """Returns the list of City instances with state_id
-            equals to the current State.id."""
-            return [
-                city
-                for city in models.storage.all(City).values()
-                if city.state_id == self.id
-            ]
+            from models import storage
+            from models.city import City
+
+            # list of cities of a particular state
+            citys = []
+            for obj in storage.all(City).values():
+                if obj.state_id == self.id:
+                    citys.append(obj)
+            return citys

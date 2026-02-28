@@ -1,84 +1,86 @@
 #!/usr/bin/python3
-"""FileStorage module for AirBnB clone v2"""
-
 import json
-
 from models.base_model import BaseModel
-from models.amenity import Amenity
+from models.user import User
+from models.state import State
 from models.city import City
+from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-from models.state import State
-from models.user import User
+
+
+classes = {
+    "BaseModel": BaseModel,
+    "User": User,
+    "State": State,
+    "City": City,
+    "Amenity": Amenity,
+    "Place": Place,
+    "Review": Review,
+}
 
 
 class FileStorage:
-    """Serializes instances to a JSON file and
-    deserializes JSON file to instances.
-
-    Attributes:
-        __file_path: path to the JSON file
-        __objects: dictionary of instantiated objects
-    """
+    ...
 
     __file_path = "file.json"
     __objects = {}
 
-    def all(self, cls=None):
-        """Returns a dictionary of models currently in storage.
-
-        If cls is specified, returns only objects of that class.
-        """
-        if cls is not None:
-            if isinstance(cls, str):
-                cls = eval(cls)
-            cls_dict = {}
-            for k, v in self.__objects.items():
-                if isinstance(v, cls):
-                    cls_dict[k] = v
-            return cls_dict
-        return self.__objects
-
     def new(self, obj):
-        """Adds new object to storage dictionary."""
-        if obj:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
-            self.__objects[key] = obj
+        """sets in __objects the obj with key <obj class name>.id"""
+        # key = f'{obj.to_dict()["__class__"]}.{obj.to_dict()["id"]}'
+        key = '{}.{}'.format(obj.to_dict()["__class__"], obj.to_dict()["id"])
+        self.__objects[key] = obj
 
     def save(self):
-        """Serializes __objects to the JSON file."""
+        """serializes __objects to the JSON file (path: __file_path)"""
         json_objects = {}
-        for key in self.__objects:
+        for key in self.__objects.keys():
             json_objects[key] = self.__objects[key].to_dict()
-        with open(self.__file_path, "w") as f:
-            json.dump(json_objects, f)
+        with open(self.__file_path, "w") as file:
+            json.dump(json_objects, file)
 
     def reload(self):
-        """Deserializes the JSON file to __objects."""
-        classes = {
-            "BaseModel": BaseModel,
-            "User": User,
-            "State": State,
-            "City": City,
-            "Amenity": Amenity,
-            "Place": Place,
-            "Review": Review,
-        }
+        """deserializes the JSON file to __objects"""
         try:
-            with open(self.__file_path, "r") as f:
-                jo = json.load(f)
-            for key in jo:
-                self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
+            with open(self.__file_path, "r") as file:
+                obj_dict = json.load(file)
+                # from models.base_model import BaseModel
+                # from models.user import User
+                for key in obj_dict:
+                    self.__objects[key] = classes[obj_dict[key]["__class__"]](
+                        **obj_dict[key]
+                    )
+                # for key in obj_dict:
+                #     if str(key).startswith("BaseModel"):
+                #         self.__objects[key] = BaseModel(**obj_dict[key])
+                #     elif str(key).startswith("User"):
+                #         self.__objects[key] = User(**obj_dict[key])
         except FileNotFoundError:
             pass
 
     def delete(self, obj=None):
-        """Deletes obj from __objects if it exists."""
+        """delete an object and save changes to __objects and json file"""
         if obj is not None:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
-            if key in self.__objects:
-                del self.__objects[key]
+            # construct the key for the object to delete
+            # obj_key = f"{obj.__class__.__name__}.{obj.id}"
+            obj_key = "{}.{}".format(obj.__class__.__name__, obj.id)
+            # delete the obj from the __objects if it exits
+            if obj_key in self.__objects:
+                del self.__objects[obj_key]
+                self.save()
+
+    def all(self, cls=None):
+        """returns the dictionary __objects"""
+        if cls is not None:
+            # filter out objects of a certain type of class and return them.
+            return {
+                key: obj
+                for key, obj in self.__objects.items()
+                if cls.__name__ == obj.__class__.__name__
+            }
+        return self.__objects
 
     def close(self):
-        """Calls reload() for deserializing the JSON file to objects."""
+        """deserializing the JSON file to objects"""
         self.reload()

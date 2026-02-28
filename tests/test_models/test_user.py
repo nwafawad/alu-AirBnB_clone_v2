@@ -1,39 +1,34 @@
 #!/usr/bin/python3
-"""tests user model."""
-import os
-import unittest
+""" """
+from tests.test_models.test_base_model import test_basemodel
 from models.user import User
 
 
-class TestUser(unittest.TestCase):
-    """Tests for User."""
+class test_User(test_basemodel):
+    """ """
 
-    def tearDown(self):
-        try:
-            os.remove("file.json")
-        except OSError:
-            pass
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self.name = "User"
+        self.value = User
 
-    def test_user_creation(self):
-        """Test User instance creation."""
-        u = User(email="a@b.com", password="pwd")
-        self.assertIsNotNone(u.id)
-        self.assertEqual(u.email, "a@b.com")
-        self.assertEqual(u.password, "pwd")
+    def test_first_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.first_name), str)
 
-    def test_user_attributes(self):
-        """Test User optional attributes."""
-        u = User(
-            email="a@b.com", password="pwd",
-            first_name="John", last_name="Doe"
-        )
-        self.assertEqual(u.first_name, "John")
-        self.assertEqual(u.last_name, "Doe")
+    def test_last_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.last_name), str)
 
-    def test_user_to_dict(self):
-        """Test User to_dict."""
-        u = User(email="a@b.com", password="pwd")
-        d = u.to_dict()
-        self.assertEqual(d["__class__"], "User")
-        self.assertIn("email", d)
-        self.assertIn("password", d)
+    def test_email(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.email), str)
+
+    def test_password(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.password), str)

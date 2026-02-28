@@ -1,30 +1,33 @@
 #!/usr/bin/python3
-"""user class"""
-
-from sqlalchemy import Column, DateTime, ForeignKey, String
+"""This module defines a class User"""
+from models.base_model import BaseModel, Base
+from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
-
-from models.base_model import Base, BaseModel
+from os import getenv
 
 
 class User(BaseModel, Base):
-    """This is the class for user
-    Attributes:
-        email: email address
-        password: password for you login
-        first_name: first name
-        last_name: last name
-    """
+    """This class defines a user by various attributes"""
 
     __tablename__ = "users"
 
-    email = Column(String(128), nullable=False)
-    password = Column(String(128), nullable=False)
-    first_name = Column(String(128), nullable=True)
-    last_name = Column(String(128), nullable=True)
-    places = relationship(
-        "Place", backref="user", cascade="all, delete-orphan"
-    )
-    reviews = relationship(
-        "Review", backref="user", cascade="all, delete-orphan"
-    )
+    if getenv("HBNB_TYPE_STORAGE") == "db":
+        email = Column(String(128), nullable=False)
+        password = Column(String(128), nullable=False)
+        first_name = Column(String(128))
+        last_name = Column(String(128))
+        places = relationship(
+            "Place", back_populates="user", cascade="all, delete-orphan"
+        )
+        reviews = relationship(
+            "Review", back_populates="user", cascade="all, delete-orphan"
+        )
+    else:
+        # for file storage
+        email = ""
+        password = ""
+        first_name = ""
+        last_name = ""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
