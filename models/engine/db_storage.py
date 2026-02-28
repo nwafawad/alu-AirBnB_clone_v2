@@ -3,7 +3,8 @@
 
 import os
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect as sa_inspect
+from sqlalchemy.exc import NoInspectionAvailable
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from models.base_model import Base, BaseModel
@@ -68,7 +69,11 @@ class DBStorage:
 
     def new(self, obj):
         """Adds object to the current database session."""
-        self.__session.add(obj)
+        try:
+            sa_inspect(type(obj))
+            self.__session.add(obj)
+        except NoInspectionAvailable:
+            pass
 
     def save(self):
         """Commits all changes of the current database session."""
